@@ -71,9 +71,7 @@ public class MLFeaSelect {
             // Sort the selected features for the Ranker
             m_FlagRanker = true;
             m_Indices1[j] = shiftIndices(m_Indices1[j], L, pa);
-            System.out.println(j+" "+m_Indices1[j].length);
         }
-        System.out.println("********************************");
         m_IG = true;
     }
 
@@ -97,7 +95,6 @@ public class MLFeaSelect {
         selector.SelectAttributes(tempD);
         m_Indices2 = selector.selectedAttributes();
         m_Indices2 = shiftIndices(m_Indices2, L, pa);
-        System.out.println(j + " " + m_Indices2.length);
         m_CFS = true;
     }
 
@@ -127,9 +124,7 @@ public class MLFeaSelect {
             // Sort the selected features for the Ranker
             m_FlagRanker = true;
             m_Indices1[j] = shiftIndices(m_Indices1[j], L, pa);
-            System.out.println(j+" "+m_Indices1[j].length);
         }
-        System.out.println("********************************");
         m_IG = true;
     }
 
@@ -154,7 +149,6 @@ public class MLFeaSelect {
         selector.SelectAttributes(tempD);
         m_Indices2 = selector.selectedAttributes();
         m_Indices2 = shiftIndices(m_Indices2, L, pa);
-        System.out.println(j + " " + m_Indices2.length);
         m_CFS = true;
     }
 

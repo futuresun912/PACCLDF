@@ -1,23 +1,25 @@
 /**
- * Created by sunlu on 12/9/15.
+ * Created by sunlu on 12/10/15.
  */
+
 import meka.classifiers.multilabel.CC;
 import meka.classifiers.multilabel.cc.CNode;
 import meka.core.A;
-import meka.core.M;
-import weka.core.Instances;
 import weka.core.Instance;
+import weka.core.Instances;
+import java.util.Random;
 
 
-public class PACCLDF extends CC {
+public class CCLDF extends CC {
 
     private MLFeaSelect mlFeaSelect;
 
-    // Training a PACC
     public void buildClassifier(Instances D) throws Exception {
         testCapabilities(D);
         int L = D.classIndex();
-//        double[] IRfactor = StatUtilsPro.CalcIRFactor(D);
+
+        // Get the IR factor for Wrapper
+        double[] IRfactor = StatUtilsPro.CalcIRFactor(D);
 
         // First-stage feature selection
         double perFea = getPerFeature(D);
@@ -26,29 +28,29 @@ public class PACCLDF extends CC {
         mlFeaSelect.feaSelect1(D, L);
 //        mlFeaSelect.feaSelect1IR(D, L, IRfactor);
 
-        // Learning of the polytree
-        Polytree polytree = new Polytree();
-        int[][] pa = polytree.polyTree(D, null);
-        m_Chain = polytree.getChainOrder();
-
-        if (getDebug()) {
-            System.out.println(A.toString(m_Chain));
-            System.out.println(M.toString(pa));
+        m_R = new Random(m_S);
+        int[] indices = getChain();
+        if (indices == null) {
+            indices = A.make_sequence(L);
+            A.shuffle(indices, m_R);
+            setChain(indices);
         }
 
-        // Building the PACC
         nodes = new CNode[L];
+        int[] pa = new int[]{};
         for (int j : m_Chain) {
             Instances tempD = mlFeaSelect.instTransform(D, j);
             mlFeaSelect.feaSelect2(tempD, j);
 //            mlFeaSelect.feaSelect2PA(tempD, j);
             tempD = mlFeaSelect.instTransform(D, j);
-            nodes[j] = new CNode(j, null, pa[j]);
+            nodes[j] = new CNode(j, null, pa);
             nodes[j].build(tempD, m_Classifier);
+            pa = A.append(pa, j);
+
         }
+
     }
 
-    // Test on a single instance deterministically
     public double[] distributionForInstance(Instance x) throws Exception {
         int L = x.classIndex();
         double[] y = new double[L];
@@ -84,4 +86,3 @@ public class PACCLDF extends CC {
         return (double)num*2.0 / d;
     }
 }
-

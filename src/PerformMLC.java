@@ -34,48 +34,57 @@ public class PerformMLC {
 
     public static void  main(String[] args) throws Exception {
 
-        BR testClassifier0 = new BR();
-        CC testClassifier1 = new CC();
+        BR mlClassifier0 = new BR();
+        BRLDF mlClassifier1 = new BRLDF();
+        BCCLDF mlClassifier2 = new BCCLDF();
+        CCLDF mlClassifier3 = new CCLDF();
+        PACCLDF mlClassifier4 = new PACCLDF();
 
-        String filename = arfflist[1];
+        String filename = arfflist[8];
+        String mlMetond = "paccldf";
 
-        int i = 0;
+//        switch (mlMetond) {
+//            case "br":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier0, options);
+//                break;
+//            case "brldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier1, options);
+//                break;
+//            case "bccldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier2, options);
+//                break;
+//            case "ccldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier3, options);
+//                break;
+//            case "paccldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier4, options);
+//                break;
+//        }
 
-        switch (i) {
-            case 0:
-                setTestOptions(filename);
-                Evaluation.runExperiment(testClassifier0, options);
-                break;
-            case 1:
-                setTestOptions(filename);
-                Evaluation.runExperiment(testClassifier1, options);
-                break;
 
-        }
+		 //**************************************************************
+		 //************** Experiments on all methods ********************
+		 //**************************************************************
+		 for (int i = 9 ; i < 11; i ++) {
+             System.out.println("*****************************************");
+             System.out.println("data-"+i+" starts!");
+             System.out.println("*****************************************\n");
 
+             setTestOptions(arfflist[i]);
+             EvaluationPro.runExperiment(mlClassifier4, options);
 
-//		 //**************************************************************
-//		 //************** Experiments on all methods ********************
-//		 //**************************************************************
-//		 for (int i = 0 ; i < arfflist.length; i ++) { // traverse all data sets
-//             System.out.println("*****************************************");
-//             System.out.println("data-"+i+" starts!");
-//             System.out.println("*****************************************\n");
-////			 setTestOptions(arfflist[i], "br", 1, 0);
-////			 EvaluationPro.runExperiment(testClassifier0, options);
-////
-//////			 setTestOptions(arfflist[i], "bcc", 1, 0);
-//////			 EvaluationPro.runExperiment(testClassifier2, options);
-////
-////             setTestOptions(arfflist[i], "bccpro", 1, 0);
-////             EvaluationPro.runExperiment(testClassifier21, options);
-//             System.out.println("*****************************************");
-//             System.out.println("data-"+i+" is finished!");
-//             System.out.println("*****************************************\n");
-//		 }
-//	   //**************************************************************
-//	   //**************************************************************
-//	   //**************************************************************
+             System.out.println("*****************************************");
+             System.out.println("data-"+i+" is finished!");
+             System.out.println("*****************************************\n");
+		 }
+	   //**************************************************************
+	   //**************************************************************
+	   //**************************************************************
 
     }
 

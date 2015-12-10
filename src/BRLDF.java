@@ -1,23 +1,29 @@
 /**
- * Created by sunlu on 12/9/15.
+ * Created by sunlu on 12/10/15.
  */
-import meka.classifiers.multilabel.CC;
-import meka.classifiers.multilabel.cc.CNode;
-import meka.core.A;
-import meka.core.M;
-import weka.core.Instances;
+
+import meka.classifiers.multilabel.BR;
+import meka.core.MLUtils;
+import weka.classifiers.AbstractClassifier;
+import weka.classifiers.Classifier;
 import weka.core.Instance;
+import weka.core.Instances;
 
+public class BRLDF extends BR {
 
-public class PACCLDF extends CC {
+    protected Classifier m_MultiClassifiers[] = null;
+    protected Instances m_InstancesTemplates[] = null;
+    protected MLFeaSelect mlFeaSelect;
 
-    private MLFeaSelect mlFeaSelect;
-
-    // Training a PACC
     public void buildClassifier(Instances D) throws Exception {
         testCapabilities(D);
         int L = D.classIndex();
+
+        // Get the Imbalance ratio-related statistics
 //        double[] IRfactor = StatUtilsPro.CalcIRFactor(D);
+
+        m_MultiClassifiers = AbstractClassifier.makeCopies(m_Classifier, L);
+        m_InstancesTemplates = new Instances[L];
 
         // First-stage feature selection
         double perFea = getPerFeature(D);
@@ -26,35 +32,33 @@ public class PACCLDF extends CC {
         mlFeaSelect.feaSelect1(D, L);
 //        mlFeaSelect.feaSelect1IR(D, L, IRfactor);
 
-        // Learning of the polytree
-        Polytree polytree = new Polytree();
-        int[][] pa = polytree.polyTree(D, null);
-        m_Chain = polytree.getChainOrder();
+        for(int j = 0; j < L; j++) {
 
-        if (getDebug()) {
-            System.out.println(A.toString(m_Chain));
-            System.out.println(M.toString(pa));
-        }
-
-        // Building the PACC
-        nodes = new CNode[L];
-        for (int j : m_Chain) {
             Instances tempD = mlFeaSelect.instTransform(D, j);
             mlFeaSelect.feaSelect2(tempD, j);
 //            mlFeaSelect.feaSelect2PA(tempD, j);
             tempD = mlFeaSelect.instTransform(D, j);
-            nodes[j] = new CNode(j, null, pa[j]);
-            nodes[j].build(tempD, m_Classifier);
+
+            // Remove labels except j-th
+            Instances D_j = MLUtils.keepAttributesAt(new Instances(tempD), new int[]{j}, L);
+            D_j.setClassIndex(0);
+
+            //Build the classifier for that class
+            m_MultiClassifiers[j].buildClassifier(D_j);
+            m_InstancesTemplates[j] = new Instances(D_j, 0);
         }
     }
 
-    // Test on a single instance deterministically
+    @Override
     public double[] distributionForInstance(Instance x) throws Exception {
         int L = x.classIndex();
-        double[] y = new double[L];
-        for (int j : m_Chain) {
+        double y[] = new double[L];
+        for (int j = 0; j < L; j++) {
             Instance xd = mlFeaSelect.instTransform(x, j);
-            y[j] = nodes[j].classify(xd, y);
+            xd.setDataset(null);
+            xd = MLUtils.keepAttributesAt((Instance)xd.copy(), new int[]{j}, L);
+            xd.setDataset(m_InstancesTemplates[j]);
+            y[j] = m_MultiClassifiers[j].distributionForInstance(xd)[1];
         }
         return y;
     }
@@ -83,5 +87,6 @@ public class PACCLDF extends CC {
         int num = mlFeaSelect.getNumFeaCfs(0);
         return (double)num*2.0 / d;
     }
+
 }
 
