@@ -6,7 +6,7 @@ import meka.classifiers.multilabel.*;
 
 public class PerformMLC {
 
-    static String n = "5";                       // n-fold CV
+    static String n = "3";                       // n-fold CV
     static String percent = "75.0";              // split percentage
     static String outputType = "2";              // 1, 2, 3, 4, 5, 6
     static String baseline = "Logistic";         // Logistic, NaiveBayes, SMO
@@ -35,34 +35,49 @@ public class PerformMLC {
     public static void  main(String[] args) throws Exception {
 
         BR mlClassifier0 = new BR();
-        BRLDF mlClassifier1 = new BRLDF();
-        BCCLDF mlClassifier2 = new BCCLDF();
-        CCLDF mlClassifier3 = new CCLDF();
-        PACCLDF mlClassifier4 = new PACCLDF();
+        CC mlClassifier1 = new CC();
+        BCC mlClassifier2 = new BCC();
+        PACC mlClassifier3 = new PACC();
+        BRLDF mlClassifier00 = new BRLDF();
+        CCLDF mlClassifier10 = new CCLDF();
+        BCCLDF mlClassifier20 = new BCCLDF();
+        PACCLDF mlClassifier30 = new PACCLDF();
 
-        String filename = arfflist[8];
-        String mlMetond = "paccldf";
+        String filename = arfflist[1];
+        String mlMetond = "pacc";
 
 //        switch (mlMetond) {
 //            case "br":
 //                setTestOptions(filename);
 //                Evaluation.runExperiment(mlClassifier0, options);
 //                break;
-//            case "brldf":
+//            case "cc":
 //                setTestOptions(filename);
 //                Evaluation.runExperiment(mlClassifier1, options);
 //                break;
-//            case "bccldf":
+//            case "bcc":
 //                setTestOptions(filename);
 //                Evaluation.runExperiment(mlClassifier2, options);
 //                break;
-//            case "ccldf":
+//            case "pacc":
 //                setTestOptions(filename);
 //                Evaluation.runExperiment(mlClassifier3, options);
 //                break;
+//            case "brldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier00, options);
+//                break;
+//            case "ccldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier10, options);
+//                break;
+//            case "bccldf":
+//                setTestOptions(filename);
+//                Evaluation.runExperiment(mlClassifier20, options);
+//                break;
 //            case "paccldf":
 //                setTestOptions(filename);
-//                Evaluation.runExperiment(mlClassifier4, options);
+//                Evaluation.runExperiment(mlClassifier30, options);
 //                break;
 //        }
 
@@ -76,7 +91,10 @@ public class PerformMLC {
              System.out.println("*****************************************\n");
 
              setTestOptions(arfflist[i]);
-             EvaluationPro.runExperiment(mlClassifier4, options);
+             EvaluationPro.runExperiment(mlClassifier3, options);
+
+//             setTestOptions(arfflist[i]);
+//             EvaluationPro.runExperiment(mlClassifier30, options);
 
              System.out.println("*****************************************");
              System.out.println("data-"+i+" is finished!");

@@ -134,8 +134,6 @@ public class Polytree {
         for (int j : chainOrder) {
             for (int k : temp) {
                 if (paPoly[j][k] != 3) {
-//                    pa[j] = A.append(pa[j], k);
-
                     if (j < k && CD[j][k] > thCD)
                         pa[j] = A.append(pa[j], k);
                     if (j > k && CD[k][j] > thCD)
